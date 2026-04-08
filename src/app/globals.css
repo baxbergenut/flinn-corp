@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f5fdff;
+  --foreground: #123047;
+  --muted: #6e8598;
+  --muted-strong: #4c687d;
+  --brand-blue: #489fd8;
+  --brand-mint: #5dc7c3;
+  --line: rgba(72, 159, 216, 0.14);
+  --line-strong: rgba(72, 159, 216, 0.24);
+  --surface: rgba(255, 255, 255, 0.72);
+  --surface-strong: rgba(255, 255, 255, 0.92);
+  --shadow: 0 28px 90px rgba(74, 141, 187, 0.14);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-space-grotesk);
+  --font-mono: var(--font-ibm-plex-mono);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  background:
+    radial-gradient(circle at top left, rgba(93, 199, 195, 0.22), transparent 32%),
+    radial-gradient(circle at top right, rgba(72, 159, 216, 0.18), transparent 28%),
+    linear-gradient(180deg, #f9feff 0%, #effbff 50%, #f6fdff 100%);
+  color: var(--foreground);
+  font-family: var(--font-space-grotesk), sans-serif;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 112px 112px;
+  mask-image: radial-gradient(circle at center, black 32%, transparent 85%);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+::selection {
+  background: rgba(93, 199, 195, 0.3);
+  color: var(--foreground);
+}
+
+a {
+  text-decoration: none;
+}
+
+.surface {
+  background: var(--surface);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(20px);
+}
+
+.hero-panel {
+  border: 1px solid rgba(255, 255, 255, 0.74);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(240, 252, 255, 0.82));
+  box-shadow: var(--shadow);
+}
+
+@media (max-width: 768px) {
+  body::before {
+    background-size: 72px 72px;
+    opacity: 0.36;
+  }
+}
