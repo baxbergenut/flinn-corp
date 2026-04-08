@@ -129,6 +129,8 @@ export default function BackgroundGrid() {
       className="site-background-grid"
       style={
         {
+          "--grid-cell-size": `${grid.cellSize}px`,
+          "--grid-gap": grid.cellSize < 60 ? "7px" : "10px",
           "--spotlight-x": `${pointer.x}px`,
           "--spotlight-y": `${pointer.y}px`,
           "--spotlight-opacity": pointer.visible ? 1 : 0,

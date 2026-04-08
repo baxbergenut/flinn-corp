@@ -114,7 +114,7 @@ function FloatingCard({
 
   return (
     <motion.div
-      className={`surface absolute rounded-[24px] px-4 py-3 ${className}`}
+      className={`glass-float absolute rounded-[24px] px-4 py-3 ${className}`}
       initial={prefersReducedMotion ? undefined : { opacity: 0, y: 18 }}
       animate={
         prefersReducedMotion
@@ -261,8 +261,8 @@ export default function Home() {
 
           <FadeIn delay={0.08} className="relative">
             <div className="hero-panel relative min-h-[420px] overflow-hidden rounded-[28px] p-3 sm:min-h-[560px] sm:rounded-[36px] sm:p-6">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_18%,rgba(93,199,195,0.26),transparent_30%),radial-gradient(circle_at_82%_16%,rgba(72,159,216,0.2),transparent_26%),linear-gradient(180deg,rgba(255,255,255,0.94),rgba(238,250,255,0.82))]" />
-              <div className="absolute inset-2.5 rounded-[24px] border border-white/70 sm:inset-3 sm:rounded-[30px]" />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_18%,rgba(93,199,195,0.08),transparent_30%),radial-gradient(circle_at_82%_16%,rgba(72,159,216,0.07),transparent_26%),linear-gradient(180deg,rgba(255,255,255,0.03),rgba(238,250,255,0.01))]" />
+              <div className="absolute inset-2.5 rounded-[24px] border border-white/20 bg-white/[0.02] sm:inset-3 sm:rounded-[30px]" />
 
               <FloatingCard
                 className="left-3 top-3 w-[180px] sm:left-5 sm:top-5 sm:w-[220px]"
@@ -291,7 +291,7 @@ export default function Home() {
 
               <svg
                 viewBox="0 0 520 520"
-                className="absolute inset-0 h-full w-full opacity-80"
+                className="absolute inset-0 h-full w-full opacity-65"
                 aria-hidden="true"
               >
                 <defs>
@@ -376,7 +376,7 @@ export default function Home() {
 
               <div className="absolute inset-0 flex items-center justify-center px-4 sm:px-10">
                 <motion.div
-                  className="relative h-[180px] w-[180px] rounded-[40px] border border-white/80 bg-white/65 shadow-[0_30px_90px_rgba(72,159,216,0.16)] backdrop-blur-md sm:h-[240px] sm:w-[240px] sm:rounded-[52px]"
+                  className="relative h-[180px] w-[180px] rounded-[40px] border border-white/28 bg-white/[0.04] shadow-[0_18px_40px_rgba(72,159,216,0.07)] backdrop-blur-[16px] sm:h-[240px] sm:w-[240px] sm:rounded-[52px]"
                   animate={
                     prefersReducedMotion
                       ? undefined
@@ -388,23 +388,23 @@ export default function Home() {
                     ease: "easeInOut",
                   }}
                 >
-                  <div className="absolute inset-[12px] rounded-[28px] bg-[linear-gradient(135deg,rgba(72,159,216,0.14),rgba(93,199,195,0.14))] sm:inset-[16px] sm:rounded-[38px]" />
+                  <div className="absolute inset-[12px] rounded-[28px] bg-[linear-gradient(145deg,rgba(255,255,255,0.1),rgba(255,255,255,0.02))] sm:inset-[16px] sm:rounded-[38px]" />
                   <div className="relative flex h-full w-full items-center justify-center">
-                    <div className="absolute inset-[18px] rounded-[30px] border border-white/85 sm:inset-[22px] sm:rounded-[40px]" />
-                    <div className="relative h-[128px] w-[128px] overflow-hidden rounded-[26px] bg-[linear-gradient(135deg,rgba(72,159,216,0.12),rgba(93,199,195,0.1))] sm:h-[178px] sm:w-[178px] sm:rounded-[36px]">
+                    <div className="absolute inset-[18px] rounded-[30px] border border-white/22 bg-white/[0.02] sm:inset-[22px] sm:rounded-[40px]" />
+                    <div className="relative h-[128px] w-[128px] overflow-hidden rounded-[26px] border border-white/24 bg-[linear-gradient(145deg,rgba(255,255,255,0.08),rgba(72,159,216,0.03))] shadow-[inset_0_1px_0_rgba(255,255,255,0.14)] sm:h-[178px] sm:w-[178px] sm:rounded-[36px]">
                       <Image
                         src="/brand/icon-only.png"
                         alt="Flinn Corp icon"
                         fill
                         sizes="178px"
-                        className="object-cover"
+                        className="object-cover opacity-90"
                       />
                     </div>
                   </div>
                 </motion.div>
               </div>
 
-              <div className="absolute bottom-3 left-1/2 z-10 w-[calc(100%-1.5rem)] max-w-[320px] -translate-x-1/2 rounded-[22px] border border-white/80 bg-white/80 px-4 py-3 text-center shadow-[0_25px_70px_rgba(72,159,216,0.16)] backdrop-blur-md sm:bottom-8 sm:w-[calc(100%-3rem)] sm:rounded-[28px] sm:px-5 sm:py-4">
+              <div className="glass-float absolute bottom-3 left-1/2 z-10 w-[calc(100%-1.5rem)] max-w-[320px] -translate-x-1/2 rounded-[22px] px-4 py-3 text-center sm:bottom-8 sm:w-[calc(100%-3rem)] sm:rounded-[28px] sm:px-5 sm:py-4">
                 <p className="font-mono text-[0.62rem] uppercase tracking-[0.24em] text-[var(--muted)] sm:text-[0.68rem] sm:tracking-[0.34em]">
                   Company Overview
                 </p>
