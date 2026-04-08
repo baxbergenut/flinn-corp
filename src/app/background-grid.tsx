@@ -1,7 +1,7 @@
 "use client";
 
 import type { CSSProperties } from "react";
-import { useEffect, useEffectEvent, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type GridState = {
   cols: number;
@@ -9,16 +9,10 @@ type GridState = {
   cellSize: number;
 };
 
-type PointerState = {
+type Point = {
   x: number;
   y: number;
-  visible: boolean;
 };
-
-type ActiveCell = {
-  col: number;
-  row: number;
-} | null;
 
 function getCellSize(width: number) {
   if (width < 640) {
@@ -32,108 +26,217 @@ function getCellSize(width: number) {
   return 84;
 }
 
+function getHighlightIndices(
+  col: number,
+  row: number,
+  cols: number,
+  rows: number
+) {
+  const points = [
+    [col, row],
+    [col - 1, row],
+    [col + 1, row],
+    [col, row - 1],
+    [col, row + 1],
+  ];
+
+  return points
+    .filter(([currentCol, currentRow]) => {
+      return (
+        currentCol >= 0 &&
+        currentCol < cols &&
+        currentRow >= 0 &&
+        currentRow < rows
+      );
+    })
+    .map(([currentCol, currentRow]) => currentRow * cols + currentCol);
+}
+
 export default function BackgroundGrid() {
   const [grid, setGrid] = useState<GridState>({
     cols: 1,
     rows: 1,
     cellSize: 84,
   });
-  const [pointer, setPointer] = useState<PointerState>({
-    x: 0,
-    y: 0,
-    visible: false,
-  });
-  const [activeCell, setActiveCell] = useState<ActiveCell>(null);
 
-  const syncGrid = useEffectEvent(() => {
-    const cellSize = getCellSize(window.innerWidth);
-    const cols = Math.ceil(window.innerWidth / cellSize) + 1;
-    const rows = Math.ceil(window.innerHeight / cellSize) + 1;
-
-    setGrid((current) => {
-      if (
-        current.cols === cols &&
-        current.rows === rows &&
-        current.cellSize === cellSize
-      ) {
-        return current;
-      }
-
-      return { cols, rows, cellSize };
-    });
-  });
-
-  const updateActiveCell = useEffectEvent((event: MouseEvent) => {
-    const col = Math.floor(event.clientX / grid.cellSize);
-    const row = Math.floor(event.clientY / grid.cellSize);
-
-    setPointer((current) => {
-      if (
-        current.x === event.clientX &&
-        current.y === event.clientY &&
-        current.visible
-      ) {
-        return current;
-      }
-
-      return {
-        x: event.clientX,
-        y: event.clientY,
-        visible: true,
-      };
-    });
-
-    setActiveCell((current) => {
-      if (current?.col === col && current.row === row) {
-        return current;
-      }
-
-      return { col, row };
-    });
-  });
-
-  const clearActiveCell = useEffectEvent(() => {
-    setActiveCell(null);
-    setPointer((current) =>
-      current.visible ? { ...current, visible: false } : current
-    );
-  });
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const gridRef = useRef(grid);
+  const rafRef = useRef<number | null>(null);
+  const latestPointerRef = useRef<Point | null>(null);
+  const highlightedRef = useRef<number[]>([]);
 
   useEffect(() => {
-    syncGrid();
+    gridRef.current = grid;
+  }, [grid]);
 
-    const handleResize = () => syncGrid();
-    const handleMouseMove = (event: MouseEvent) => updateActiveCell(event);
+  useEffect(() => {
+    const syncGrid = () => {
+      const cellSize = getCellSize(window.innerWidth);
+      const cols = Math.ceil(window.innerWidth / cellSize) + 1;
+      const rows = Math.ceil(window.innerHeight / cellSize) + 1;
+
+      setGrid((current) => {
+        if (
+          current.cols === cols &&
+          current.rows === rows &&
+          current.cellSize === cellSize
+        ) {
+          return current;
+        }
+
+        return { cols, rows, cellSize };
+      });
+    };
+
+    syncGrid();
+    window.addEventListener("resize", syncGrid);
+
+    return () => {
+      window.removeEventListener("resize", syncGrid);
+    };
+  }, []);
+
+  useEffect(() => {
+    const root = rootRef.current;
+
+    if (!root) {
+      return;
+    }
+
+    const clearHighlights = () => {
+      const inner = root.firstElementChild;
+
+      if (!inner) {
+        highlightedRef.current = [];
+        return;
+      }
+
+      for (const index of highlightedRef.current) {
+        const cell = inner.children[index] as HTMLElement | undefined;
+
+        if (!cell) {
+          continue;
+        }
+
+        cell.classList.remove("site-background-grid__cell--active");
+        cell.classList.remove("site-background-grid__cell--nearby");
+      }
+
+      highlightedRef.current = [];
+    };
+
+    const applyPointerEffects = () => {
+      rafRef.current = null;
+
+      const point = latestPointerRef.current;
+      const inner = root.firstElementChild;
+
+      if (!point || !inner) {
+        return;
+      }
+
+      root.style.setProperty("--spotlight-x", `${point.x}px`);
+      root.style.setProperty("--spotlight-y", `${point.y}px`);
+      root.style.setProperty("--spotlight-opacity", "1");
+
+      const currentGrid = gridRef.current;
+      const col = Math.floor(point.x / currentGrid.cellSize);
+      const row = Math.floor(point.y / currentGrid.cellSize);
+      const nextIndices = getHighlightIndices(
+        col,
+        row,
+        currentGrid.cols,
+        currentGrid.rows
+      );
+      const activeIndex = row * currentGrid.cols + col;
+
+      for (const index of highlightedRef.current) {
+        if (nextIndices.includes(index)) {
+          continue;
+        }
+
+        const cell = inner.children[index] as HTMLElement | undefined;
+
+        if (!cell) {
+          continue;
+        }
+
+        cell.classList.remove("site-background-grid__cell--active");
+        cell.classList.remove("site-background-grid__cell--nearby");
+      }
+
+      for (const index of nextIndices) {
+        const cell = inner.children[index] as HTMLElement | undefined;
+
+        if (!cell) {
+          continue;
+        }
+
+        if (index === activeIndex) {
+          cell.classList.add("site-background-grid__cell--active");
+          cell.classList.remove("site-background-grid__cell--nearby");
+        } else {
+          cell.classList.add("site-background-grid__cell--nearby");
+          cell.classList.remove("site-background-grid__cell--active");
+        }
+      }
+
+      highlightedRef.current = nextIndices;
+    };
+
+    const schedulePointerEffects = () => {
+      if (rafRef.current !== null) {
+        return;
+      }
+
+      rafRef.current = window.requestAnimationFrame(applyPointerEffects);
+    };
+
+    const handleMouseMove = (event: MouseEvent) => {
+      latestPointerRef.current = {
+        x: event.clientX,
+        y: event.clientY,
+      };
+      schedulePointerEffects();
+    };
+
+    const clearPointerEffects = () => {
+      latestPointerRef.current = null;
+      root.style.setProperty("--spotlight-opacity", "0");
+      clearHighlights();
+    };
+
     const handleMouseOut = (event: MouseEvent) => {
       if (!event.relatedTarget) {
-        clearActiveCell();
+        clearPointerEffects();
       }
     };
 
-    window.addEventListener("resize", handleResize);
     window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    window.addEventListener("blur", clearPointerEffects);
     window.addEventListener("mouseout", handleMouseOut);
-    window.addEventListener("blur", clearActiveCell);
 
     return () => {
-      window.removeEventListener("resize", handleResize);
       window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("blur", clearPointerEffects);
       window.removeEventListener("mouseout", handleMouseOut);
-      window.removeEventListener("blur", clearActiveCell);
+
+      if (rafRef.current !== null) {
+        window.cancelAnimationFrame(rafRef.current);
+      }
     };
   }, []);
 
   return (
     <div
+      ref={rootRef}
       aria-hidden="true"
       className="site-background-grid"
       style={
         {
           "--grid-cell-size": `${grid.cellSize}px`,
           "--grid-gap": grid.cellSize < 60 ? "7px" : "10px",
-          "--spotlight-x": `${pointer.x}px`,
-          "--spotlight-y": `${pointer.y}px`,
-          "--spotlight-opacity": pointer.visible ? 1 : 0,
+          "--spotlight-opacity": 0,
         } as CSSProperties
       }
     >
@@ -146,25 +249,9 @@ export default function BackgroundGrid() {
           height: `${grid.rows * grid.cellSize}px`,
         }}
       >
-        {Array.from({ length: grid.cols * grid.rows }, (_, index) => {
-          const col = index % grid.cols;
-          const row = Math.floor(index / grid.cols);
-
-          let cellClass = "site-background-grid__cell";
-
-          if (activeCell) {
-            const distance =
-              Math.abs(activeCell.col - col) + Math.abs(activeCell.row - row);
-
-            if (distance === 0) {
-              cellClass += " site-background-grid__cell--active";
-            } else if (distance === 1) {
-              cellClass += " site-background-grid__cell--nearby";
-            }
-          }
-
-          return <span key={`${col}-${row}`} className={cellClass} />;
-        })}
+        {Array.from({ length: grid.cols * grid.rows }, (_, index) => (
+          <span key={index} className="site-background-grid__cell" />
+        ))}
       </div>
     </div>
   );
