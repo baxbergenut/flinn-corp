@@ -82,9 +82,9 @@ export const metadata: Metadata = {
 
 export default function PrivacyPolicyPage() {
   return (
-    <main className="relative overflow-x-clip pb-10">
-      <div className="mx-auto flex min-h-screen w-full max-w-[1450px] flex-col px-3 pb-8 pt-3 sm:px-6 sm:pb-10 sm:pt-4 lg:px-4">
-        <header className="surface sticky top-3 z-50 flex items-center justify-between gap-3 rounded-[28px] px-4 py-3 sm:top-4 sm:rounded-full sm:px-6">
+    <main className="relative z-10 overflow-x-clip pb-10">
+      <div className="mx-auto flex min-h-screen w-full max-w-[1450px] flex-col px-3 pb-8 pt-0 sm:px-6 sm:pb-10 sm:pt-0 lg:px-4">
+        <header className="surface sticky top-0 z-50 flex items-center justify-between gap-3 rounded-[28px] px-4 py-3 sm:rounded-full sm:px-6">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.22em] text-[var(--brand-blue)] sm:text-sm sm:tracking-[0.28em]">
               Flinn Corp

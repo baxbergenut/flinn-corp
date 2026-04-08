@@ -153,9 +153,9 @@ export default function Home() {
   const prefersReducedMotion = useReducedMotion();
 
   return (
-    <main className="relative overflow-x-clip pb-10">
-      <div className="mx-auto flex min-h-screen w-full max-w-[1600px] flex-col px-3 pb-8 pt-3 sm:px-6 sm:pb-10 sm:pt-4 lg:px-4">
-        <header className="surface sticky top-3 z-50 flex items-center justify-between gap-3 rounded-[28px] px-3 py-3 sm:top-4 sm:rounded-full sm:px-6">
+    <main className="relative z-10 overflow-x-clip pb-10">
+      <div className="mx-auto flex min-h-screen w-full max-w-[1600px] flex-col px-3 pb-8 pt-0 sm:px-6 sm:pb-10 sm:pt-0 lg:px-4">
+        <header className="surface sticky top-0 z-50 flex items-center justify-between gap-3 rounded-[28px] px-3 py-3 sm:rounded-full sm:px-6">
           <a href="#top" className="flex min-w-0 items-center gap-3">
             <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-2xl border border-white/70 bg-white/80 shadow-[0_8px_30px_rgba(72,159,216,0.14)] sm:h-11 sm:w-11">
               <Image
