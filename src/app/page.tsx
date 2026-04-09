@@ -264,6 +264,16 @@ export default function Home() {
                 <Phone className="h-4 w-4" />
                 {siteConfig.phone}
               </a>
+              <a
+                href="https://account.neweratitans.com/apply/MTE3NTE="
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Apply to drive with Flinn Corp"
+                className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-[rgba(72,159,216,0.2)] bg-[linear-gradient(135deg,rgba(72,159,216,0.12),rgba(93,199,195,0.18))] px-6 py-3 text-sm font-semibold text-[var(--foreground)] shadow-[0_18px_45px_rgba(72,159,216,0.12)] transition hover:-translate-y-[1px] hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-blue)] focus-visible:ring-offset-2 sm:w-auto"
+              >
+                <span>Drive With Flinn Corp</span>
+                <ArrowRight className="h-4 w-4 shrink-0" />
+              </a>
             </div>
 
             <div className="mt-8 grid gap-3 sm:mt-10 sm:grid-cols-2 xl:grid-cols-4">
